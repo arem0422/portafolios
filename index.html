@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portafolio · Anthony Escalona</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0f1b2c;
+      --panel: #15243a;
+      --accent: #39b4ff;
+      --accent-2: #5fe39b;
+      --text: #e8eef6;
+      --muted: #9aacbf;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Manrope', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: radial-gradient(circle at 12% 20%, rgba(57, 180, 255, 0.08), transparent 30%),
+                  radial-gradient(circle at 90% 10%, rgba(95, 227, 155, 0.07), transparent 30%),
+                  var(--bg);
+      color: var(--text);
+      overflow: hidden;
+    }
+
+    .app {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .slides { position: absolute; inset: 0; }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      padding: 72px clamp(18px, 4vw, 80px);
+      display: grid;
+      align-content: center;
+      gap: 32px;
+      opacity: 0;
+      transform: translateX(40px);
+      transition: opacity 420ms ease, transform 420ms ease;
+    }
+
+    .slide.active { opacity: 1; transform: translateX(0); pointer-events: auto; }
+    .slide:not(.active) { pointer-events: none; }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: var(--accent);
+      text-transform: uppercase;
+      font-size: 13px;
+    }
+    .eyebrow::before {
+      content: '';
+      width: 36px;
+      height: 2px;
+      background: var(--accent);
+      border-radius: 999px;
+    }
+
+    h1, h2, h3 { margin: 0; line-height: 1.15; }
+    h1 { font-size: clamp(38px, 5vw, 64px); font-weight: 800; max-width: 820px; }
+    h1 .highlight { color: var(--accent); }
+    h2 { font-size: clamp(28px, 3vw, 40px); font-weight: 800; }
+    p.lead {
+      max-width: 820px;
+      font-size: clamp(16px, 2vw, 20px);
+      color: var(--muted);
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .projects {
+      display: grid;
+      gap: 18px;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      max-width: 1100px;
+    }
+
+    .card {
+      background: var(--panel);
+      border-radius: 18px;
+      padding: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      box-shadow: 0 15px 60px rgba(0, 0, 0, 0.35);
+      position: relative;
+      overflow: hidden;
+    }
+    .card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(220px at 20% 20%, rgba(57, 180, 255, 0.08), transparent 50%);
+      pointer-events: none;
+    }
+    .tagline { color: var(--accent); font-weight: 700; font-size: 16px; margin: 0 0 6px; }
+    .card h3 { font-size: 20px; margin-bottom: 6px; }
+
+    ul { list-style: none; padding: 0; margin: 10px 0 0; color: var(--muted); line-height: 1.6; }
+    ul li::before { content: '>'; color: var(--accent-2); margin-right: 8px; font-weight: 700; }
+
+    .nav {
+      position: absolute;
+      right: clamp(18px, 3vw, 36px);
+      bottom: 26px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(15, 27, 44, 0.65);
+      backdrop-filter: blur(12px);
+      padding: 10px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .nav button {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: var(--panel);
+      color: var(--text);
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 120ms ease, border-color 160ms ease;
+    }
+    .nav button:hover { transform: translateY(-2px); border-color: rgba(57, 180, 255, 0.5); }
+    .dots { display: flex; align-items: center; gap: 8px; padding: 0 8px; }
+    .dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: rgba(255, 255, 255, 0.25);
+      cursor: pointer;
+      transition: transform 120ms ease, background 160ms ease;
+    }
+    .dot.active { background: var(--accent); transform: scale(1.1); box-shadow: 0 0 0 6px rgba(57, 180, 255, 0.16); }
+
+    .floating-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(95, 227, 155, 0.12);
+      color: var(--text);
+      border: 1px solid rgba(95, 227, 155, 0.35);
+      padding: 12px 16px;
+      border-radius: 14px;
+      box-shadow: 0 10px 40px rgba(95, 227, 155, 0.15);
+      max-width: 840px;
+      line-height: 1.4;
+    }
+    .floating-badge strong { color: var(--accent-2); }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+      max-width: 720px;
+    }
+    .stat {
+      padding: 14px 16px;
+      background: rgba(21, 36, 58, 0.8);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      display: grid;
+      gap: 4px;
+    }
+    .stat .value { font-size: 26px; font-weight: 800; color: var(--accent-2); }
+    .stat .label { font-size: 13px; color: var(--muted); letter-spacing: 0.02em; }
+
+    .grid-projects {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      max-width: 1200px;
+    }
+    .project-card {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0)) , var(--panel);
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      overflow: hidden;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+      display: grid;
+      grid-template-rows: 160px 1fr;
+    }
+    .project-thumb {
+      position: relative;
+      background: linear-gradient(135deg, rgba(57, 180, 255, 0.18), rgba(95, 227, 155, 0.14)), #0c1624;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #e8eef6;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      font-size: 14px;
+    }
+    .project-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .project-thumb::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(220px at 30% 30%, rgba(57, 180, 255, 0.18), transparent 50%);
+      pointer-events: none;
+    }
+    .project-body { padding: 14px 16px 16px; display: grid; gap: 8px; }
+    .project-body h4 { margin: 0; font-size: 16px; font-weight: 800; color: var(--text); }
+    .project-meta { display: flex; flex-wrap: wrap; gap: 8px; font-size: 13px; color: var(--muted); }
+    .project-meta span { background: rgba(255, 255, 255, 0.04); padding: 4px 8px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.04); }
+    .project-body a { color: var(--accent); text-decoration: none; font-weight: 700; font-size: 13px; }
+    .project-body a:hover { text-decoration: underline; }
+
+    @media (max-width: 700px) {
+      .slide { padding: 56px 18px 90px; }
+      h1 { font-size: clamp(32px, 9vw, 46px); }
+      .nav { left: 50%; transform: translateX(-50%); right: auto; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="slides">
+      <section class="slide active" data-slide="0">
+        <span class="eyebrow">Anthony Escalona · Full Stack Developer</span>
+        <h1>Especialista en <span class="highlight">Desarrollo Web</span> con enfoque en APIs, datos y plataformas estables.</h1>
+        <p class="lead">Mas de 7 anos creando soluciones web robustas y escalables. Experiencia en arquitectura de software, integracion de APIs REST, automatizacion de procesos y mantenimiento de plataformas en produccion.</p>
+        <div class="stats">
+          <div class="stat"><div class="value">7+ anos</div><div class="label">Experiencia backend</div></div>
+          <div class="stat"><div class="value">3 empresas</div><div class="label">Soporte TI y desarrollo</div></div>
+          <div class="stat"><div class="value">15+ proyectos</div><div class="label">Desplegados</div></div>
+        </div>
+        <div class="floating-badge">
+          <strong>Contacto:</strong> Las Condes, Region Metropolitana · +56904845788 · anthony2446@gmail.com · <a href="https://www.linkedin.com/in/anthony-r-escalona/" target="_blank" rel="noopener noreferrer" style="color:#FFF">LinkedIn</a>
+        </div>
+      </section>
+
+      <section class="slide" data-slide="1">
+        <span class="eyebrow">Experiencia laboral</span>
+        <h2>Trayectoria reciente</h2>
+        <div class="projects">
+          <article class="card">
+            <div class="tagline">Jefe de Soporte TI · VGROUP SPA</div>
+            <h3>Actualmente</h3>
+            <ul>
+              <li>Lidero gestion estrategica del equipo de soporte y mejora continua.</li>
+              <li>Automatizacion de procesos y optimizacion de recursos.</li>
+              <li>Diseno de soluciones, administracion de servidores y control de integridad.</li>
+            </ul>
+          </article>
+          <article class="card">
+            <div class="tagline">Desarrollador Web · Mezcla SPA</div>
+            <h3>Octubre 2020 - Enero 2019</h3>
+            <ul>
+              <li>Desarrollo de proyectos digitales con Laravel, PHP y MySQL.</li>
+              <li>Integracion con CMS (WordPress/WooCommerce) y APIs REST.</li>
+              <li>Mejoras de rendimiento, usabilidad y seguridad en plataformas.</li>
+            </ul>
+          </article>
+          <article class="card">
+            <div class="tagline">Desarrollador Web · Sapito Tech</div>
+            <h3>Diciembre 2018 - Enero 2018</h3>
+            <ul>
+              <li>Creacion de sitios personalizados y CMS ajustados a requisitos del cliente.</li>
+              <li>Implementacion de funcionalidades dinamicas y servicios con APIs REST.</li>
+              <li>Desarrollo backend en PHP (Laravel) y bases de datos relacionales.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="slide" data-slide="2">
+        <span class="eyebrow">Habilidades y formacion</span>
+        <h2>Stack tecnico y certificaciones</h2>
+        <div class="projects">
+          <article class="card">
+            <div class="tagline">Backend & Datos</div>
+            <ul>
+                <li>Wordpress, PHP, MySQL, PostgreSQL y diseno de bases de datos.</li>
+              <li>Laravel, PHP, MySQL, PostgreSQL y diseno de bases de datos.</li>
+              <li>POO, patrones de diseno y refactorizacion de codigo legacy.</li>
+              <li>Automatizacion de tareas, servicios web y APIs RESTful.</li>
+            </ul>
+          </article>
+          <article class="card">
+            <div class="tagline">DevOps & Integraciones</div>
+            <ul>
+              <li>CI/CD, control de versiones con Git y despliegues seguros.</li>
+              <li>Integracion y consumo de APIs, seguridad en aplicaciones web.</li>
+              <li>Monitoreo de rendimiento y resolucion proactiva de incidentes.</li>
+            </ul>
+          </article>
+          <article class="card">
+            <div class="tagline">Formacion y cursos recientes</div>
+            <ul>
+              <li>ChatGPT: Optimizacion de resultados · Oracle One · 2024.</li>
+              <li>Ultimate Docker: Guia de cero hasta despliegues · Udemy · 2025.</li>
+              <li>Serverless, Lambdas y API Gateway con AWS · Udemy · 2024.</li>
+              <li>SQL avanzado · Udemy · 2024.</li>
+              <li>Laravel 6-11 + Tailwind/Vue 3 · Udemy · 2020.</li>
+              <li>Tecnico Superior en Informatica · IUJO · 2015.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="slide" data-slide="3">
+        <span class="eyebrow">Portafolio</span>
+        <h2>Proyectos destacados (8)</h2>
+        <div class="grid-projects">
+          <article class="project-card">
+            <div class="project-thumb"><img src="/img/elsotano.png" alt="Nova Dashboard"></div>
+            <div class="project-body">
+              <h4>El Sotano</h4>
+              <div class="project-meta">
+                <span>Cliente: El Sotano Scaperoom</span>
+                <span>Next.js · MySQL · MercadoPago . React</span>
+              </div>
+              <a href="https://www.elsotanoescaperoom.cl/" target="_blank" rel="noopener noreferrer">Ver sitio</a>
+            </div>
+          </article>
+          <article class="project-card">
+            <div class="project-thumb"><img src="/img/academy.png" alt="Vgroup Academy"></div>
+            <div class="project-body">
+              <h4>Vgroup Academy</h4>
+              <div class="project-meta">
+                <span>Cliente: Vgroup SPA</span>
+                <span>Node · lambda</span>
+              </div>
+              <a href="https://academy.vgroup.cl" target="_blank" rel="noopener noreferrer">Ver sitio</a>
+            </div>
+          </article>
+          <article class="project-card">
+            <div class="project-thumb"><img src="/img/sasi.png" alt="Vgroup Academy"></div>
+            <div class="project-body">
+              <h4>Sasi</h4>
+              <div class="project-meta">
+                <span>Cliente: Sasi SPA</span>
+                <span>Laravel · MySQL · Webpay</span>
+              </div>
+              <a href="https://sasi.cl/" target="_blank" rel="sasi">Ver sitio</a>
+            </div>
+          </article>
+          <article class="project-card">
+            <div class="project-thumb"><img src="/img/voxy.png" alt="Vgroup Academy"></div>
+            <div class="project-body">
+              <h4>Voxy</h4>
+              <div class="project-meta">
+                <span>Cliente: VGroup</span>
+                <span>Vue · Laravel · mysql</span>
+              </div>
+              <a href="https://voxy.vgroup.cl/" target="_blank" rel="noopener noreferrer">Ver sitio</a>
+            </div>
+          </article>
+          <article class="project-card">
+            <div class="project-thumb"><img src="/img/ninico.png" alt="Vgroup Academy"></div>
+            <div class="project-body">
+              <h4>Ninico.cl</h4>
+              <div class="project-meta">
+                <span>Cliente: Nicolas Burgos</span>
+                <span>WordPress · Mysql · Webpay</span>
+              </div>
+              <a href="http://ninico.cl/" target="_blank" rel="noopener noreferrer">Ver sitio</a>
+            </div>
+          </article>
+          <article class="project-card">
+            <div class="project-thumb"><img src="/img/mariab.png" alt="MariaBelen.cl"></div>
+            <div class="project-body">
+              <h4>MariaBelen.cl</h4>
+              <div class="project-meta">
+                <span>Cliente: Mariabelen SPA</span>
+                <span>WordPress · IA · MySQL</span>
+              </div>
+              <a href="https://mariabelen.cl/" target="_blank" rel="noopener noreferrer">Ver sitio</a>
+            </div>
+          </article>
+          <article class="project-card">
+            <div class="project-thumb"><img src="/img/excel.png" alt="Excel para el Exito"></div>
+            <div class="project-body">
+              <h4>Excel para el Exito</h4>
+              <div class="project-meta">
+                <span>Cliente: Juan Cifuentes</span>
+                <span>Next.js · React · Bootstrap</span>
+              </div>
+              <a href="https://excelparaelexito.cl/" target="_blank" rel="noopener noreferrer">Ver sitio</a>
+            </div>
+          </article>
+          <article class="project-card">
+            <div class="project-thumb"><img src="/img/vgroup.png" alt="vgroup"></div>
+            <div class="project-body">
+              <h4>Vgroup</h4>
+              <div class="project-meta">
+                <span>Cliente: Vgroup SPA</span>
+                <span>Laravel · MySQL · IA</span>
+              </div>
+              <a href="https://vgroup.cl/" target="_blank" rel="noopener noreferrer">Ver sitio</a>
+            </div>
+          </article>
+        </div>
+      </section>
+    </div>
+
+    <div class="nav">
+      <button id="prev" aria-label="Anterior">&lsaquo;</button>
+      <div class="dots">
+        <div class="dot active" data-target="0"></div>
+        <div class="dot" data-target="1"></div>
+        <div class="dot" data-target="2"></div>
+        <div class="dot" data-target="3"></div>
+      </div>
+      <button id="next" aria-label="Siguiente">&rsaquo;</button>
+    </div>
+  </div>
+
+  <script>
+    const slides = Array.from(document.querySelectorAll('.slide'));
+    const dots = Array.from(document.querySelectorAll('.dot'));
+    const prev = document.getElementById('prev');
+    const next = document.getElementById('next');
+    let current = 0;
+
+    const setSlide = (index) => {
+      current = (index + slides.length) % slides.length;
+      slides.forEach((slide, i) => slide.classList.toggle('active', i === current));
+      dots.forEach((dot, i) => dot.classList.toggle('active', i === current));
+    };
+
+    prev.addEventListener('click', () => setSlide(current - 1));
+    next.addEventListener('click', () => setSlide(current + 1));
+    dots.forEach((dot) => dot.addEventListener('click', () => setSlide(Number(dot.dataset.target))));
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') setSlide(current - 1);
+      if (e.key === 'ArrowRight') setSlide(current + 1);
+    });
+
+    setTimeout(() => setSlide(0), 80);
+  </script>
+</body>
+</html>
